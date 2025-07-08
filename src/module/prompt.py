@@ -1,51 +1,37 @@
-from typing import Dict, List, Optional
-from schema.lim import PromptModel
+from typing import Dict, List
+from datetime import datetime
+import uuid
+from schema.lim import LogEntry
 
 
-class PromptManager:
+class LogManager:
     def __init__(self):
-        self.prompts: Dict[str, PromptModel] = {}
-        self._initialize_default_prompts()
+        self.logs: Dict[str, LogEntry] = {}
     
-    def _initialize_default_prompts(self):
-        default_prompt = PromptModel(
-            id="default",
-            name="デフォルトプロンプト",
-            content="あなたは質問に対して丁寧で詳細な回答を提供するアシスタントです。質問に対して正確で分かりやすい回答を提供してください。",
-            description="基本的な質問応答用のデフォルトプロンプト"
+    def create_log_entry(self, request_body: dict, response_body: dict, 
+                        processing_time_ms: float, status: str) -> LogEntry:
+        log_id = str(uuid.uuid4())
+        log_entry = LogEntry(
+            id=log_id,
+            timestamp=datetime.now(),
+            request_body=request_body,
+            response_body=response_body,
+            processing_time_ms=processing_time_ms,
+            status=status
         )
-        self.prompts[default_prompt.id] = default_prompt
+        self.logs[log_id] = log_entry
+        return log_entry
     
-    def get_all_prompts(self) -> List[PromptModel]:
-        return list(self.prompts.values())
+    def get_all_logs(self) -> List[LogEntry]:
+        return sorted(list(self.logs.values()), key=lambda x: x.timestamp, reverse=True)
     
-    def get_prompt(self, prompt_id: str) -> Optional[PromptModel]:
-        return self.prompts.get(prompt_id)
+    def get_log(self, log_id: str) -> LogEntry:
+        return self.logs.get(log_id)
     
-    def create_prompt(self, prompt: PromptModel) -> PromptModel:
-        self.prompts[prompt.id] = prompt
-        return prompt
-    
-    def update_prompt(self, prompt_id: str, name: Optional[str] = None, 
-                     content: Optional[str] = None, description: Optional[str] = None) -> Optional[PromptModel]:
-        if prompt_id not in self.prompts:
-            return None
-        
-        prompt = self.prompts[prompt_id]
-        if name is not None:
-            prompt.name = name
-        if content is not None:
-            prompt.content = content
-        if description is not None:
-            prompt.description = description
-        
-        return prompt
-    
-    def delete_prompt(self, prompt_id: str) -> bool:
-        if prompt_id in self.prompts:
-            del self.prompts[prompt_id]
-            return True
-        return False
+    def clear_logs(self) -> int:
+        count = len(self.logs)
+        self.logs.clear()
+        return count
 
 
-prompt_manager = PromptManager()
+log_manager = LogManager()

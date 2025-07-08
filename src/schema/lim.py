@@ -1,36 +1,34 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
+from datetime import datetime
 
 
-class PromptModel(BaseModel):
+class TranscriptRequest(BaseModel):
+    transcript: str
+    meeting_title: Optional[str] = None
+    meeting_date: Optional[str] = None
+    participants: Optional[str] = None
+
+
+class MeetingMinutesResponse(BaseModel):
+    meeting_title: Optional[str] = None
+    meeting_date: Optional[str] = None
+    participants: Optional[str] = None
+    summary: str
+    key_points: str
+    action_items: str
+    decisions: str
+    original_transcript: str
+    generated_at: datetime
+
+
+class LogEntry(BaseModel):
     id: str
-    name: str
-    content: str
-    description: Optional[str] = None
-
-
-class QuestionRequest(BaseModel):
-    question: str
-    prompt_id: Optional[str] = None
-
-
-class QuestionResponse(BaseModel):
-    question: str
-    answer: str
-    prompt_used: Optional[str] = None
-
-
-class PromptCreateRequest(BaseModel):
-    id: str
-    name: str
-    content: str
-    description: Optional[str] = None
-
-
-class PromptUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    content: Optional[str] = None
-    description: Optional[str] = None
+    timestamp: datetime
+    request_body: dict
+    response_body: dict
+    processing_time_ms: float
+    status: str
 
 
 class ErrorResponse(BaseModel):
