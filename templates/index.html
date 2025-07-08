@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI質問応答システム</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #007acc;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+        .prompt-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .prompt-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+        }
+        .response-area {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 AI質問応答システム</h1>
+    
+    <!-- プロンプト管理セクション -->
+    <div class="container">
+        <h2>📝 プロンプト管理</h2>
+        <form id="promptForm">
+            <div class="form-group">
+                <label for="promptId">プロンプトID:</label>
+                <input type="text" id="promptId" name="promptId" required>
+            </div>
+            <div class="form-group">
+                <label for="promptName">プロンプト名:</label>
+                <input type="text" id="promptName" name="promptName" required>
+            </div>
+            <div class="form-group">
+                <label for="promptContent">プロンプト内容:</label>
+                <textarea id="promptContent" name="promptContent" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="promptDescription">説明（任意）:</label>
+                <input type="text" id="promptDescription" name="promptDescription">
+            </div>
+            <button type="submit">プロンプトを追加/更新</button>
+        </form>
+        
+        <div class="prompt-list">
+            <h3>登録済みプロンプト</h3>
+            <div id="promptsList"></div>
+        </div>
+    </div>
+    
+    <!-- 質問応答セクション -->
+    <div class="container">
+        <h2>💬 質問応答</h2>
+        <form id="questionForm">
+            <div class="form-group">
+                <label for="promptSelect">使用するプロンプト:</label>
+                <select id="promptSelect" name="promptSelect">
+                    <option value="">プロンプトを選択してください</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="question">質問:</label>
+                <textarea id="question" name="question" placeholder="ここに質問を入力してください..." required></textarea>
+            </div>
+            <button type="submit">質問する</button>
+        </form>
+        
+        <div id="responseArea" class="response-area" style="display: none;">
+            <h3>回答:</h3>
+            <div id="responseContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // プロンプト一覧を読み込む
+        async function loadPrompts() {
+            try {
+                const response = await fetch('/prompts');
+                const prompts = await response.json();
+                
+                const promptsList = document.getElementById('promptsList');
+                const promptSelect = document.getElementById('promptSelect');
+                
+                promptsList.innerHTML = '';
+                promptSelect.innerHTML = '<option value="">プロンプトを選択してください</option>';
+                
+                prompts.forEach(prompt => {
+                    // プロンプト一覧表示
+                    const promptDiv = document.createElement('div');
+                    promptDiv.className = 'prompt-item';
+                    promptDiv.innerHTML = `
+                        <strong>${prompt.name}</strong> (ID: ${prompt.id})
+                        <br><small>${prompt.description || '説明なし'}</small>
+                        <br><em>${prompt.content.substring(0, 100)}${prompt.content.length > 100 ? '...' : ''}</em>
+                    `;
+                    promptsList.appendChild(promptDiv);
+                    
+                    // セレクトボックスに追加
+                    const option = document.createElement('option');
+                    option.value = prompt.id;
+                    option.textContent = prompt.name;
+                    promptSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('プロンプトの読み込みに失敗しました:', error);
+            }
+        }
+        
+        // プロンプト追加/更新
+        document.getElementById('promptForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const promptData = {
+                id: formData.get('promptId'),
+                name: formData.get('promptName'),
+                content: formData.get('promptContent'),
+                description: formData.get('promptDescription')
+            };
+            
+            try {
+                const response = await fetch('/prompts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(promptData)
+                });
+                
+                if (response.ok) {
+                    alert('プロンプトが正常に保存されました');
+                    e.target.reset();
+                    loadPrompts();
+                } else {
+                    alert('プロンプトの保存に失敗しました');
+                }
+            } catch (error) {
+                alert('エラーが発生しました: ' + error.message);
+            }
+        });
+        
+        // 質問送信
+        document.getElementById('questionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const questionData = {
+                question: formData.get('question'),
+                prompt_id: formData.get('promptSelect') || null
+            };
+            
+            const responseArea = document.getElementById('responseArea');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseArea.style.display = 'block';
+            responseContent.innerHTML = '<div class="loading">回答を生成中...</div>';
+            
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(questionData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    responseContent.innerHTML = `
+                        <p><strong>質問:</strong> ${result.question}</p>
+                        <p><strong>使用プロンプト:</strong> ${result.prompt_used || 'なし'}</p>
+                        <p><strong>回答:</strong></p>
+                        <div style="background: white; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                            ${result.answer.replace(/\n/g, '<br>')}
+                        </div>
+                    `;
+                } else {
+                    responseContent.innerHTML = `<div class="error">エラー: ${result.detail || '不明なエラーが発生しました'}</div>`;
+                }
+            } catch (error) {
+                responseContent.innerHTML = `<div class="error">エラーが発生しました: ${error.message}</div>`;
+            }
+        });
+        
+        // ページ読み込み時にプロンプト一覧を取得
+        window.addEventListener('load', loadPrompts);
+    </script>
+</body>
+</html>
