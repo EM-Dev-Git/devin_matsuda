@@ -23,30 +23,6 @@ app.add_middleware(
 app.include_router(router, prefix="/api/v1", tags=["Meeting Minutes Generation"])
 
 
-@app.get("/")
-async def root():
-    """ルートエンドポイント"""
-    return {
-        "message": "Teams会議議事録生成システム",
-        "description": "Teams会議のトランスクリプトから議事録を自動生成",
-        "docs": "/docs",
-        "redoc": "/redoc",
-        "azure_openai_configured": settings.azure_openai_configured,
-        "endpoints": {
-            "generate_minutes": "/api/v1/generate-minutes",
-            "logs": "/api/v1/logs"
-        }
-    }
-
-
-@app.get("/health")
-async def health_check():
-    """ヘルスチェックエンドポイント"""
-    return {
-        "status": "healthy",
-        "service": "Teams Meeting Minutes Generator",
-        "azure_openai_configured": settings.azure_openai_configured
-    }
 
 
 if __name__ == "__main__":
