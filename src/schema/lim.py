@@ -8,11 +8,7 @@ class TranscriptRequest(BaseModel):
 
 
 class MeetingMinutesResponse(BaseModel):
-    summary: str
-    key_points: str
-    action_items: str
-    decisions: str
-    original_transcript: str
+    meeting_minutes: str
     generated_at: datetime
 
 

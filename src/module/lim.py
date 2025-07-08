@@ -30,7 +30,7 @@ class MeetingMinutesGenerator:
             print("Azure OpenAI credentials not found. Running in demo mode.")
     
     
-    async def generate_meeting_minutes(self, transcript: str) -> Dict[str, str]:
+    async def generate_meeting_minutes(self, transcript: str) -> str:
         if not self.credentials_available:
             return self._generate_demo_minutes(transcript)
         
@@ -56,59 +56,14 @@ class MeetingMinutesGenerator:
             )
             
             content = response.choices[0].message.content
-            
-            sections = self._parse_meeting_minutes(content)
-            return sections
+            return content
             
         except Exception as e:
-            error_msg = f"Azure OpenAI APIエラーが発生しました: {str(e)}"
-            return {
-                "summary": error_msg,
-                "key_points": "エラーが発生しました",
-                "action_items": "システム管理者に連絡してください",
-                "decisions": "処理を完了できませんでした"
-            }
+            error_msg = f"Azure OpenAI APIエラーが発生しました: {str(e)}\n\nエラーが発生しました。システム管理者に連絡してください。\n処理を完了できませんでした。"
+            return error_msg
     
-    def _parse_meeting_minutes(self, content: str) -> Dict[str, str]:
-        sections = {
-            "summary": "",
-            "key_points": "",
-            "action_items": "",
-            "decisions": ""
-        }
-        
-        lines = content.split('\n')
-        current_section = None
-        
-        for line in lines:
-            line = line.strip()
-            
-            if line.startswith('## 会議概要') or line.startswith('### ## 会議概要'):
-                current_section = "summary"
-                continue
-            elif line.startswith('## 主要なポイント') or line.startswith('### ## 主要なポイント'):
-                current_section = "key_points"
-                continue
-            elif line.startswith('## アクションアイテム') or line.startswith('### ## アクションアイテム'):
-                current_section = "action_items"
-                continue
-            elif line.startswith('## 決定事項') or line.startswith('### ## 決定事項'):
-                current_section = "decisions"
-                continue
-            
-            if line and current_section and not line.startswith('#'):
-                if sections[current_section]:
-                    sections[current_section] += "\n" + line
-                else:
-                    sections[current_section] = line
-        
-        for key in sections:
-            if not sections[key].strip():
-                sections[key] = "該当する情報がトランスクリプトに含まれていません"
-        
-        return sections
     
-    def _generate_demo_minutes(self, transcript: str) -> Dict[str, str]:
+    def _generate_demo_minutes(self, transcript: str) -> str:
         """デモモード用の議事録生成（実際のトランスクリプト内容を分析）"""
         
         lines = transcript.split('\n')
@@ -128,15 +83,28 @@ class MeetingMinutesGenerator:
         
         participant_list = list(participants)[:5]  # 最大5名まで
         
-        return {
-            "summary": f"【デモモード - 実際のトランスクリプト分析】\n\n参加者: {', '.join(participant_list) if participant_list else '不明'}\nトランスクリプト文字数: {len(transcript)}文字\n\n主要な議論内容が含まれた会議のようです。実際のAzure OpenAI APIを使用することで、より詳細で正確な議事録を生成できます。",
-            
-            "key_points": f"• 参加者数: {len(participant_list)}名\n• トランスクリプト総文字数: {len(transcript)}文字\n• 検出されたトピック数: {len(topics)}件\n• 実際のAI分析により、より詳細な議論内容を抽出可能",
-            
-            "action_items": "• Azure OpenAI API認証情報の設定\n• 実際の会議トランスクリプトでの本格テスト\n• 議事録生成精度の確認と調整",
-            
-            "decisions": "• デモモードでの基本動作確認完了\n• トランスクリプト解析機能の実装確認\n• 本格運用に向けたAPI設定が必要"
-        }
+        meeting_minutes = f"""## 会議概要
+【デモモード - 実際のトランスクリプト分析】
+
+参加者: {', '.join(participant_list) if participant_list else '不明'}
+トランスクリプト文字数: {len(transcript)}文字
+
+主要な議論内容が含まれた会議のようです。実際のAzure OpenAI APIを使用することで、より詳細で正確な議事録を生成できます。
+
+• 参加者数: {len(participant_list)}名
+• トランスクリプト総文字数: {len(transcript)}文字
+• 検出されたトピック数: {len(topics)}件
+• 実際のAI分析により、より詳細な議論内容を抽出可能
+
+• Azure OpenAI API認証情報の設定
+• 実際の会議トランスクリプトでの本格テスト
+• 議事録生成精度の確認と調整
+
+• デモモードでの基本動作確認完了
+• トランスクリプト解析機能の実装確認
+• 本格運用に向けたAPI設定が必要"""
+
+        return meeting_minutes
 
 
 meeting_minutes_generator = MeetingMinutesGenerator()
