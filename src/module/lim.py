@@ -45,11 +45,10 @@ class MeetingMinutesGenerator:
 トランスクリプト:
 """
     
-    async def generate_meeting_minutes(self, transcript: str, meeting_title: str = None, 
-                                     meeting_date: str = None, participants: str = None) -> Dict[str, str]:
+    async def generate_meeting_minutes(self, transcript: str) -> Dict[str, str]:
         if not self.credentials_available:
             return {
-                "summary": f"【デモモード】会議議事録生成システムのデモです。\n\n会議タイトル: {meeting_title or '未設定'}\n会議日時: {meeting_date or '未設定'}\n参加者: {participants or '未設定'}\n\nトランスクリプト文字数: {len(transcript)}文字\n\n実際のAI生成議事録を取得するには、env/.envファイルにAzure OpenAI認証情報を設定してください。",
+                "summary": f"【デモモード】会議議事録生成システムのデモです。\n\nトランスクリプト文字数: {len(transcript)}文字\n\n実際のAI生成議事録を取得するには、env/.envファイルにAzure OpenAI認証情報を設定してください。",
                 "key_points": "• デモモードで動作中\n• Azure OpenAI認証情報が必要\n• トランスクリプト処理機能は実装済み",
                 "action_items": "• Azure OpenAI APIキーの設定\n• 実際の会議トランスクリプトでのテスト",
                 "decisions": "• デモモードでの動作確認完了\n• システムの基本機能は正常"

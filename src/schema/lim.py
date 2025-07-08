@@ -4,16 +4,10 @@ from datetime import datetime
 
 
 class TranscriptRequest(BaseModel):
-    transcript: str
-    meeting_title: Optional[str] = None
-    meeting_date: Optional[str] = None
-    participants: Optional[str] = None
+    original_transcript: str
 
 
 class MeetingMinutesResponse(BaseModel):
-    meeting_title: Optional[str] = None
-    meeting_date: Optional[str] = None
-    participants: Optional[str] = None
     summary: str
     key_points: str
     action_items: str

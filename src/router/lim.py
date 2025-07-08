@@ -20,21 +20,15 @@ async def generate_meeting_minutes(request: TranscriptRequest):
         request_body = request.dict()
         
         sections = await meeting_minutes_generator.generate_meeting_minutes(
-            transcript=request.transcript,
-            meeting_title=request.meeting_title,
-            meeting_date=request.meeting_date,
-            participants=request.participants
+            transcript=request.original_transcript
         )
         
         response = MeetingMinutesResponse(
-            meeting_title=request.meeting_title,
-            meeting_date=request.meeting_date,
-            participants=request.participants,
             summary=sections["summary"],
             key_points=sections["key_points"],
             action_items=sections["action_items"],
             decisions=sections["decisions"],
-            original_transcript=request.transcript,
+            original_transcript=request.original_transcript,
             generated_at=datetime.now()
         )
         
