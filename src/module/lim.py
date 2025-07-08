@@ -29,30 +29,39 @@ class MeetingMinutesGenerator:
             print("Azure OpenAI credentials not found. Running in demo mode.")
     
     def _get_meeting_minutes_prompt(self) -> str:
-        return """
-あなたは会議の議事録作成の専門家です。以下のTeams会議のトランスクリプトから、構造化された議事録を作成してください。
+        return """あなたは経験豊富な会議議事録作成の専門家です。以下のTeams会議のトランスクリプトを分析し、構造化された議事録を作成してください。
 
-以下の形式で出力してください：
+必ず以下の形式で出力してください：
 
-[会議の全体的な概要を2-3文で記述]
+会議の目的と主要なテーマを2-3文で簡潔にまとめてください。参加者の主な役割や立場があれば記載し、会議の全体的な流れや結論を要約してください。
 
-[重要な議論点や決定事項を箇条書きで記述]
+• 議論された重要な論点を箇条書きで記載
+• 各参加者の主要な発言や意見を整理
+• 提起された課題や問題点を明確に記述
+• 数値やデータがあれば具体的に記載
 
-[具体的な行動項目、担当者、期限があれば記述]
+• 具体的な行動項目を明確に記載
+• 可能な限り担当者と期限を特定
+• 優先度や重要度があれば記載
+• 次回までに完了すべき事項を整理
 
-[会議で決定された事項を明確に記述]
+• 会議で正式に決定された事項を明確に記載
+• 承認された提案や方針を具体的に記述
+• 今後の方向性や戦略について決定された内容
+• 予算や人員配置などの具体的な決定事項
 
-トランスクリプト:
+重要な注意事項：
+- 各セクションは必ず「## セクション名」で始めてください
+- 情報が不足している場合は「情報不足のため詳細不明」と記載
+- 推測や憶測は避け、トランスクリプトに基づいた内容のみ記載
+- 日本語で自然で読みやすい文章で作成してください
+
+以下がトランスクリプトです：
 """
     
     async def generate_meeting_minutes(self, transcript: str) -> Dict[str, str]:
         if not self.credentials_available:
-            return {
-                "summary": f"【デモモード】会議議事録生成システムのデモです。\n\nトランスクリプト文字数: {len(transcript)}文字\n\n実際のAI生成議事録を取得するには、env/.envファイルにAzure OpenAI認証情報を設定してください。",
-                "key_points": "• デモモードで動作中\n• Azure OpenAI認証情報が必要\n• トランスクリプト処理機能は実装済み",
-                "action_items": "• Azure OpenAI APIキーの設定\n• 実際の会議トランスクリプトでのテスト",
-                "decisions": "• デモモードでの動作確認完了\n• システムの基本機能は正常"
-            }
+            return self._generate_demo_minutes(transcript)
         
         try:
             prompt = self._get_meeting_minutes_prompt()
@@ -102,25 +111,61 @@ class MeetingMinutesGenerator:
         
         for line in lines:
             line = line.strip()
-            if '## 会議概要' in line or '概要' in line:
+            
+            if line.startswith('## 会議概要') or line.startswith('### ## 会議概要'):
                 current_section = "summary"
-            elif '## 主要なポイント' in line or 'ポイント' in line:
+                continue
+            elif line.startswith('## 主要なポイント') or line.startswith('### ## 主要なポイント'):
                 current_section = "key_points"
-            elif '## アクションアイテム' in line or 'アクション' in line:
+                continue
+            elif line.startswith('## アクションアイテム') or line.startswith('### ## アクションアイテム'):
                 current_section = "action_items"
-            elif '## 決定事項' in line or '決定' in line:
+                continue
+            elif line.startswith('## 決定事項') or line.startswith('### ## 決定事項'):
                 current_section = "decisions"
-            elif line and current_section and not line.startswith('#'):
+                continue
+            
+            if line and current_section and not line.startswith('#'):
                 if sections[current_section]:
                     sections[current_section] += "\n" + line
                 else:
                     sections[current_section] = line
         
         for key in sections:
-            if not sections[key]:
-                sections[key] = "該当なし"
+            if not sections[key].strip():
+                sections[key] = "該当する情報がトランスクリプトに含まれていません"
         
         return sections
+    
+    def _generate_demo_minutes(self, transcript: str) -> Dict[str, str]:
+        """デモモード用の議事録生成（実際のトランスクリプト内容を分析）"""
+        
+        lines = transcript.split('\n')
+        participants = set()
+        topics = []
+        
+        for line in lines:
+            line = line.strip()
+            if ':' in line and len(line.split(':')[0]) < 50:
+                speaker = line.split(':')[0].strip()
+                if speaker and len(speaker) < 30:
+                    participants.add(speaker)
+            
+            if any(keyword in line.lower() for keyword in ['プロジェクト', 'タスク', '課題', '問題', '提案', '決定', '承認']):
+                if len(line) > 20 and len(line) < 200:
+                    topics.append(line.strip())
+        
+        participant_list = list(participants)[:5]  # 最大5名まで
+        
+        return {
+            "summary": f"【デモモード - 実際のトランスクリプト分析】\n\n参加者: {', '.join(participant_list) if participant_list else '不明'}\nトランスクリプト文字数: {len(transcript)}文字\n\n主要な議論内容が含まれた会議のようです。実際のAzure OpenAI APIを使用することで、より詳細で正確な議事録を生成できます。",
+            
+            "key_points": f"• 参加者数: {len(participant_list)}名\n• トランスクリプト総文字数: {len(transcript)}文字\n• 検出されたトピック数: {len(topics)}件\n• 実際のAI分析により、より詳細な議論内容を抽出可能",
+            
+            "action_items": "• Azure OpenAI API認証情報の設定\n• 実際の会議トランスクリプトでの本格テスト\n• 議事録生成精度の確認と調整",
+            
+            "decisions": "• デモモードでの基本動作確認完了\n• トランスクリプト解析機能の実装確認\n• 本格運用に向けたAPI設定が必要"
+        }
 
 
 meeting_minutes_generator = MeetingMinutesGenerator()
