@@ -36,16 +36,16 @@ async def generate_meeting_minutes(
     5. 成功ログの記録
     6. 議事録データの返却
     
-    Args:
+    引数:
         request (Request): FastAPIリクエストオブジェクト（メタデータ取得用）
         minutes_request (MinutesRequest): 議事録生成リクエスト（transcript含む）
         current_user (User): 認証されたユーザー情報（JWT依存性注入）
         db (Session): データベースセッション（依存性注入）
         
-    Returns:
+    戻り値:
         MinutesResponse: 生成された議事録と生成時刻
         
-    Raises:
+    例外:
         HTTPException: トランスクリプトが空の場合（400 Bad Request）
         HTTPException: JWT認証失敗時（401 Unauthorized）
         HTTPException: 内部サーバーエラー時（500 Internal Server Error）
@@ -81,7 +81,6 @@ async def generate_meeting_minutes(
             user_id=current_user.user_id           # 認証されたユーザーID（ログ記録用）
         )
         
-        # generated_atフィールドにより、クライアントは議事録の生成時刻を把握可能
         response = MinutesResponse(
             meeting_minutes=meeting_minutes,  # OpenAI APIで生成された議事録（Markdown形式）
             generated_at=datetime.utcnow()   # 議事録生成完了時刻（UTC）

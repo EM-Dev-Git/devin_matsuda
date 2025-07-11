@@ -53,14 +53,14 @@ class MinutesGenerator:
         5. レスポンスログの記録
         6. エラーハンドリング
         
-        Args:
+        引数:
             transcript (str): Teams会議のトランスクリプト（発言者名と発言内容を含む）
             user_id (str, optional): 議事録生成を要求したユーザーID（ログ記録用）
             
-        Returns:
+        戻り値:
             str: 生成された議事録（Markdown形式の構造化テキスト）
             
-        Raises:
+        例外:
             Exception: 議事録生成中にエラーが発生した場合
             
         処理フロー：
@@ -142,7 +142,7 @@ class MinutesGenerator:
         このプロンプトはAIの役割、出力形式、注意事項を詳細に指定し、
         一貫性のある高品質な議事録生成を実現します。
         
-        Returns:
+        戻り値:
             str: 議事録生成用のシステムプロンプト（日本語）
             
         プロンプト構成要素：

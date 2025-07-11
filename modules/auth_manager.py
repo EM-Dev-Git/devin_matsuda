@@ -39,11 +39,11 @@ class AuthManager:
         ログイン時にユーザーが入力したパスワードが正しいかを確認するために使用されます。
         bcryptアルゴリズムを使用して安全に照合を行います。
         
-        Args:
+        引数:
             plain_password (str): ユーザーが入力した平文パスワード
             hashed_password (str): データベースに保存されているハッシュ化パスワード
             
-        Returns:
+        戻り値:
             bool: パスワードが一致する場合True、一致しない場合False
             
         使用例:
@@ -59,10 +59,10 @@ class AuthManager:
         ユーザー登録時やパスワード変更時に、平文パスワードを安全なハッシュ値に変換します。
         bcryptアルゴリズムを使用し、ソルト付きでハッシュ化を行います。
         
-        Args:
+        引数:
             password (str): ハッシュ化する平文パスワード
             
-        Returns:
+        戻り値:
             str: bcryptでハッシュ化されたパスワード文字列
             
         使用例:
@@ -78,11 +78,11 @@ class AuthManager:
         ユーザー認証成功時に、保護されたエンドポイントへのアクセスに使用する
         JWTトークンを生成します。トークンにはユーザーIDと有効期限が含まれます。
         
-        Args:
+        引数:
             data (dict): トークンに含めるデータ（通常は{"sub": user_id}）
             expires_delta (Optional[timedelta]): カスタム有効期限（指定しない場合はデフォルト値を使用）
             
-        Returns:
+        戻り値:
             str: 署名付きJWTトークン文字列
             
         使用例:
@@ -108,10 +108,10 @@ class AuthManager:
         保護されたエンドポイントへのアクセス時に、クライアントから送信された
         JWTトークンが有効かを確認し、含まれているユーザーIDを取得します。
         
-        Args:
+        引数:
             token (str): 検証するJWTトークン文字列
             
-        Returns:
+        戻り値:
             Optional[str]: トークンが有効な場合はユーザーID、無効な場合はNone
             
         使用例:
@@ -138,12 +138,12 @@ class AuthManager:
         ログイン時にユーザーIDとパスワードの組み合わせが正しいかを確認します。
         データベースからユーザーを取得し、パスワードを照合します。
         
-        Args:
+        引数:
             db (Session): データベースセッション
             user_id (str): 認証するユーザーID
             password (str): 認証する平文パスワード
             
-        Returns:
+        戻り値:
             Optional[User]: 認証成功時はUserオブジェクト、失敗時はNone
             
         使用例:
@@ -167,14 +167,14 @@ class AuthManager:
         ユーザー登録時に新しいユーザーアカウントをデータベースに作成します。
         パスワードは自動的にハッシュ化されて保存されます。
         
-        Args:
+        引数:
             db (Session): データベースセッション
             user (UserCreate): ユーザー作成情報（user_id, password）
             
-        Returns:
+        戻り値:
             User: 作成されたユーザーオブジェクト（データベースから取得した最新情報）
             
-        Raises:
+        例外:
             IntegrityError: ユーザーIDが既に存在する場合（一意制約違反）
             
         使用例:
@@ -203,11 +203,11 @@ class AuthManager:
         指定されたユーザーIDに対応するユーザー情報をデータベースから取得します。
         ユーザー存在確認やプロフィール取得などで使用されます。
         
-        Args:
+        引数:
             db (Session): データベースセッション
             user_id (str): 取得するユーザーのID
             
-        Returns:
+        戻り値:
             Optional[User]: ユーザーが存在する場合はUserオブジェクト、存在しない場合はNone
             
         使用例:

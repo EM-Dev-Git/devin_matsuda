@@ -33,15 +33,15 @@ async def login(request: Request, login_data: LoginRequest, db: Session = Depend
     7. レスポンスログの記録
     8. JWTトークンの返却
     
-    Args:
+    引数:
         request (Request): FastAPIリクエストオブジェクト（IPアドレス取得用）
         login_data (LoginRequest): ログイン情報（user_id, password）
         db (Session): データベースセッション（依存性注入）
         
-    Returns:
+    戻り値:
         LoginResponse: JWTアクセストークンとトークンタイプ
         
-    Raises:
+    例外:
         HTTPException: 認証失敗時（401 Unauthorized）
         HTTPException: 内部サーバーエラー時（500 Internal Server Error）
         
@@ -131,15 +131,15 @@ async def register(request: Request, register_data: RegisterRequest, db: Session
     6. レスポンスログの記録
     7. 登録完了メッセージの返却
     
-    Args:
+    引数:
         request (Request): FastAPIリクエストオブジェクト（IPアドレス取得用）
         register_data (RegisterRequest): 登録情報（user_id, password）
         db (Session): データベースセッション（依存性注入）
         
-    Returns:
+    戻り値:
         RegisterResponse: 登録完了メッセージとユーザーID
         
-    Raises:
+    例外:
         HTTPException: ユーザーID重複時（400 Bad Request）
         HTTPException: 内部サーバーエラー時（500 Internal Server Error）
         
@@ -228,14 +228,14 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     5. ユーザー存在確認
     6. ユーザーオブジェクト返却
     
-    Args:
+    引数:
         credentials (HTTPAuthorizationCredentials): JWT認証情報（依存性注入）
         db (Session): データベースセッション（依存性注入）
         
-    Returns:
+    戻り値:
         User: 認証されたユーザーのデータベースオブジェクト
         
-    Raises:
+    例外:
         HTTPException: トークンが無効な場合（401 Unauthorized）
         HTTPException: ユーザーが見つからない場合（401 Unauthorized）
         HTTPException: 認証処理でエラーが発生した場合（401 Unauthorized）

@@ -63,14 +63,14 @@ class OpenAIClient:
         GPTモデルに議事録生成を依頼します。API認証情報が利用できない場合は
         デモレスポンスを返します。
         
-        Args:
+        引数:
             system_prompt (str): システムプロンプト（AIの役割と指示を定義）
             user_message (str): ユーザーメッセージ（Teams会議のトランスクリプト）
             
-        Returns:
+        戻り値:
             str: 生成された議事録テキスト（Markdown形式）
             
-        Raises:
+        例外:
             Exception: OpenAI API呼び出し時のエラー（ネットワーク、認証、レート制限など）
             
         使用例:
@@ -116,10 +116,10 @@ class OpenAIClient:
         - キーワードベースのトピック検出
         - 基本的な統計情報（文字数、参加者数など）
         
-        Args:
+        引数:
             transcript (str): Teams会議のトランスクリプト
             
-        Returns:
+        戻り値:
             str: デモ用議事録（Markdown形式）
             
         注意:

@@ -28,7 +28,7 @@ def get_db():
     def get_users(db: Session = Depends(get_db)):
         return db.query(User).all()
     
-    Returns:
+    戻り値:
         Session: データベースセッションオブジェクト
     """
     db = SessionLocal()

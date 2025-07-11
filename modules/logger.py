@@ -66,7 +66,7 @@ class APILogger:
         クライアントからのAPIリクエストの詳細情報を構造化されたJSON形式で記録します。
         セキュリティ上の理由から、パスワードなどの機密情報は除外してログに記録してください。
         
-        Args:
+        引数:
             endpoint (str): リクエストされたエンドポイント（例："/auth/login"）
             method (str): HTTPメソッド（GET, POST, PUT, DELETE等）
             user_id (str, optional): リクエストを送信したユーザーID（認証済みの場合）
@@ -101,7 +101,7 @@ class APILogger:
         サーバーからクライアントへのAPIレスポンスの詳細情報を構造化されたJSON形式で記録します。
         処理時間も記録することで、パフォーマンス分析に活用できます。
         
-        Args:
+        引数:
             endpoint (str): レスポンスしたエンドポイント（例："/auth/login"）
             method (str): HTTPメソッド（GET, POST, PUT, DELETE等）
             status_code (int): HTTPステータスコード（200, 400, 500等）
@@ -141,7 +141,7 @@ class APILogger:
         API処理中に発生したエラーの詳細情報を構造化されたJSON形式で記録します。
         エラーログは問題の特定とデバッグに重要な情報を提供します。
         
-        Args:
+        引数:
             endpoint (str): エラーが発生したエンドポイント（例："/minutes/generate"）
             method (str): HTTPメソッド（GET, POST, PUT, DELETE等）
             error (str): エラーの詳細メッセージ
@@ -175,7 +175,7 @@ class APILogger:
         ユーザーのログイン試行（成功・失敗）を構造化されたJSON形式で記録します。
         セキュリティ監視と不正アクセス検知に重要な情報を提供します。
         
-        Args:
+        引数:
             user_id (str): 認証を試行したユーザーID
             success (bool): 認証の成功/失敗（True: 成功, False: 失敗）
             ip_address (str, optional): 認証試行元のIPアドレス
