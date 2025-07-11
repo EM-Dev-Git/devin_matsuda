@@ -9,7 +9,7 @@ import logging  # Pythonの標準ログライブラリ
 import os  # 環境変数を取得するためのOSライブラリ
 from dotenv import load_dotenv  # .envファイルから環境変数を読み込むライブラリ
 
-load_dotenv()
+load_dotenv() #.envファイルから環境変数を読み込む。
 
 logging.basicConfig(
     level=logging.INFO,  # INFOレベル以上のログを出力
@@ -78,9 +78,9 @@ if __name__ == "__main__":
     host = os.getenv("HOST", "0.0.0.0")  # サーバーのホストアドレス（デフォルト：すべてのインターフェースでリッスン）
     port = int(os.getenv("PORT", "8000"))  # サーバーのポート番号（デフォルト：8000）
     debug = os.getenv("DEBUG", "True").lower() == "true"  # デバッグモードの有効/無効（デフォルト：有効）
-    
+
     logger.info(f"Starting server on {host}:{port}")
-    
+
     uvicorn.run(
         "main:app",  # アプリケーションの場所（このファイルのappオブジェクト）
         host=host,  # ホストアドレス

@@ -31,8 +31,8 @@ class AuthManager:
     インスタンス化せずに直接呼び出すことができます。
     """
     
-    @staticmethod
-    def verify_password(plain_password: str, hashed_password: str) -> bool:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def verify_password(plain_password: str, hashed_password: str) -> bool:  # 平文パスワードとハッシュ化パスワードを比較する関数
         """
         平文パスワードとハッシュ化パスワードを照合する
         
@@ -49,10 +49,10 @@ class AuthManager:
         使用例:
             is_valid = AuthManager.verify_password("user_input", stored_hash)
         """
-        return pwd_context.verify(plain_password, hashed_password)
+        return pwd_context.verify(plain_password, hashed_password)  # bcryptコンテキストを使用してパスワードを検証し、結果（True/False）を返す
     
-    @staticmethod
-    def get_password_hash(password: str) -> str:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def get_password_hash(password: str) -> str:  # 平文パスワードをハッシュ化する関数
         """
         平文パスワードをハッシュ化する
         
@@ -68,7 +68,7 @@ class AuthManager:
         使用例:
             hashed = AuthManager.get_password_hash("user_password")
         """
-        return pwd_context.hash(password)
+        return pwd_context.hash(password)  # bcryptコンテキストを使用してパスワードをハッシュ化し、ハッシュ値を返す
     
     @staticmethod
     def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -100,8 +100,8 @@ class AuthManager:
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
     
-    @staticmethod
-    def verify_token(token: str) -> Optional[str]:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def verify_token(token: str) -> Optional[str]:  # JWTトークンを検証してユーザーIDを取得する関数
         """
         JWTトークンを検証してユーザーIDを取得する
         
@@ -130,8 +130,8 @@ class AuthManager:
         except JWTError:
             return None
     
-    @staticmethod
-    def authenticate_user(db: Session, user_id: str, password: str) -> Optional[User]:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def authenticate_user(db: Session, user_id: str, password: str) -> Optional[User]:  # ユーザー認証を行う関数
         """
         ユーザー認証を行う
         
@@ -159,8 +159,8 @@ class AuthManager:
             
         return user
     
-    @staticmethod
-    def create_user(db: Session, user: UserCreate) -> User:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def create_user(db: Session, user: UserCreate) -> User:  # 新規ユーザーを作成する関数
         """
         新規ユーザーを作成する
         
@@ -195,8 +195,8 @@ class AuthManager:
         
         return db_user
     
-    @staticmethod
-    def get_user_by_user_id(db: Session, user_id: str) -> Optional[User]:
+    @staticmethod  # クラスインスタンスを作成せずに呼び出し可能な静的メソッドとして定義
+    def get_user_by_user_id(db: Session, user_id: str) -> Optional[User]:  # ユーザーIDでユーザーを検索する関数
         """
         ユーザーIDでユーザーを取得する
         
@@ -213,4 +213,4 @@ class AuthManager:
         使用例:
             user = AuthManager.get_user_by_user_id(db, "yamada")
         """
-        return db.query(User).filter(User.user_id == user_id).first()
+        return db.query(User).filter(User.user_id == user_id).first()  # データベースからユーザーIDに一致する最初のユーザーを検索して返す

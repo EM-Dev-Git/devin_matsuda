@@ -7,7 +7,7 @@ import logging  # ログ出力用
 
 load_dotenv()
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # 現在のモジュール名でロガーインスタンスを作成
 
 class OpenAIClient:
     """
@@ -168,4 +168,4 @@ class OpenAIClient:
         logger.info("Demo meeting minutes generated successfully")
         return demo_minutes
 
-openai_client = OpenAIClient()
+openai_client = OpenAIClient()  # OpenAIClientクラスのシングルトンインスタンスを作成（モジュール全体で共有）

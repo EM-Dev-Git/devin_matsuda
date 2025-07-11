@@ -210,4 +210,4 @@ class APILogger:
         
         self.logger.log(level, f"AUTH: {json.dumps(log_data, ensure_ascii=False)}")
 
-api_logger = APILogger()
+api_logger = APILogger()  # APILoggerクラスのシングルトンインスタンスを作成（モジュール全体で共有）

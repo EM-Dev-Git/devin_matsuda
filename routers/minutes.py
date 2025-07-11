@@ -1,25 +1,25 @@
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request  # FastAPI関連（ルーター、依存性注入、例外、ステータス、リクエスト）
-from sqlalchemy.orm import Session  # データベースセッション型
-from database import get_db  # データベースセッション取得関数
-from modules.minutes_generator import minutes_generator  # 議事録生成クラス（シングルトンインスタンス）
-from modules.logger import api_logger  # API専用ロガー（構造化ログ記録）
-from schemas.minutes import MinutesRequest, MinutesResponse  # 議事録関連のPydanticスキーマ
-from routers.auth import get_current_user  # JWT認証依存関数
-from models.user import User  # ユーザーデータベースモデル
-from datetime import datetime  # 日時操作（議事録生成時刻記録用）
-import logging  # 標準ログライブラリ
+from fastapi import APIRouter, Depends, HTTPException, status, Request  # FastAPI関連（ルーター、依存性注入、例外、ステータス、リクエスト）をインポート
+from sqlalchemy.orm import Session  # データベースセッション型をインポート
+from database import get_db  # データベースセッション取得関数をインポート
+from modules.minutes_generator import minutes_generator  # 議事録生成クラス（シングルトンインスタンス）をインポート
+from modules.logger import api_logger  # API専用ロガー（構造化ログ記録）をインポート
+from schemas.minutes import MinutesRequest, MinutesResponse  # 議事録関連のPydanticスキーマをインポート
+from routers.auth import get_current_user  # JWT認証依存関数をインポート
+from models.user import User  # ユーザーデータベースモデルをインポート
+from datetime import datetime  # 日時操作（議事録生成時刻記録用）をインポート
+import logging  # 標準ログライブラリをインポート
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # 現在のモジュール名でロガーインスタンスを作成
 
-router = APIRouter()
+router = APIRouter()  # FastAPIのAPIRouterインスタンスを作成（議事録関連エンドポイントをグループ化）
 
-@router.post("/generate", response_model=MinutesResponse)
-async def generate_meeting_minutes(
-    request: Request,
-    minutes_request: MinutesRequest,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+@router.post("/generate", response_model=MinutesResponse)  # POSTメソッドで/generateエンドポイントを定義、レスポンスモデルを指定
+async def generate_meeting_minutes(  # Teams会議議事録生成を行う非同期関数
+    request: Request,  # FastAPIリクエストオブジェクト（メタデータ取得用）
+    minutes_request: MinutesRequest,  # 議事録生成リクエスト（transcript含む）
+    current_user: User = Depends(get_current_user),  # 認証されたユーザー情報（JWT依存性注入）
+    db: Session = Depends(get_db)  # データベースセッション（依存性注入）
 ):
     """
     Teams会議議事録生成エンドポイント（JWT認証必須）
