@@ -1,15 +1,41 @@
-from openai import OpenAI
-from typing import Optional
-import os
-from dotenv import load_dotenv
-import logging
+
+from openai import OpenAI  # OpenAI公式ライブラリ（GPTモデルとの通信用）
+from typing import Optional  # 型ヒント（None値を許可する型）
+import os  # 環境変数取得用
+from dotenv import load_dotenv  # .envファイルから環境変数読み込み
+import logging  # ログ出力用
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 class OpenAIClient:
+    """
+    OpenAI APIクライアントクラス
+    OpenAI GPTモデルとの通信を管理し、Teams会議トランスクリプトから議事録を生成します
+    
+    主な機能：
+    - OpenAI API認証情報の管理
+    - GPTモデルを使用したテキスト生成
+    - デモモード（API認証情報がない場合の代替機能）
+    - エラーハンドリングとログ記録
+    
+    使用例：
+        client = OpenAIClient()
+        minutes = await client.generate_completion(system_prompt, transcript)
+    """
+    
     def __init__(self):
+        """
+        OpenAIクライアントの初期化
+        
+        環境変数からAPI認証情報を取得し、OpenAIクライアントを初期化します。
+        認証情報が利用できない場合は、デモモードで動作します。
+        
+        環境変数：
+        - OPENAI_API_KEY: OpenAI APIキー（必須）
+        - OPENAI_MODEL: 使用するGPTモデル名（デフォルト: gpt-3.5-turbo）
+        """
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
         
@@ -30,20 +56,43 @@ class OpenAIClient:
             print("OpenAI API key not found. Running in demo mode.")
     
     async def generate_completion(self, system_prompt: str, user_message: str) -> str:
+        """
+        OpenAI GPTモデルを使用してテキスト生成を行う
+        
+        システムプロンプトとユーザーメッセージを組み合わせて、
+        GPTモデルに議事録生成を依頼します。API認証情報が利用できない場合は
+        デモレスポンスを返します。
+        
+        Args:
+            system_prompt (str): システムプロンプト（AIの役割と指示を定義）
+            user_message (str): ユーザーメッセージ（Teams会議のトランスクリプト）
+            
+        Returns:
+            str: 生成された議事録テキスト（Markdown形式）
+            
+        Raises:
+            Exception: OpenAI API呼び出し時のエラー（ネットワーク、認証、レート制限など）
+            
+        使用例:
+            minutes = await client.generate_completion(
+                "あなたは議事録作成の専門家です...",
+                "山田: おはようございます..."
+            )
+        """
         if not self.credentials_available:
             return self._generate_demo_response(user_message)
         
         try:
             messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
+                {"role": "system", "content": system_prompt},  # システムプロンプト（AIの役割定義）
+                {"role": "user", "content": user_message}      # ユーザーメッセージ（トランスクリプト）
             ]
             
             response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=2000,
-                temperature=0.3
+                model=self.model,           # 使用するGPTモデル（gpt-3.5-turbo等）
+                messages=messages,          # 会話メッセージ
+                max_tokens=2000,           # 生成する最大トークン数（約1500-2000文字相当）
+                temperature=0.3            # 生成の創造性レベル（0.0-1.0、低いほど一貫性重視）
             )
             
             content = response.choices[0].message.content
@@ -56,9 +105,30 @@ class OpenAIClient:
             return error_msg
     
     def _generate_demo_response(self, transcript: str) -> str:
+        """
+        デモモード用の議事録生成機能
+        
+        OpenAI API認証情報が利用できない場合に、トランスクリプトを簡易分析して
+        デモ用の議事録を生成します。実際のAI分析は行わず、基本的なテキスト解析のみを実行します。
+        
+        分析内容：
+        - 発言者名の抽出（コロン区切りの形式から）
+        - キーワードベースのトピック検出
+        - 基本的な統計情報（文字数、参加者数など）
+        
+        Args:
+            transcript (str): Teams会議のトランスクリプト
+            
+        Returns:
+            str: デモ用議事録（Markdown形式）
+            
+        注意:
+            この機能は開発・テスト用途のみで、実際の議事録生成には適していません。
+            本格運用時は必ずOpenAI API認証情報を設定してください。
+        """
         lines = transcript.split('\n')
-        participants = set()
-        topics = []
+        participants = set()  # 参加者名を格納するセット（重複除去）
+        topics = []          # 検出されたトピックを格納するリスト
         
         for line in lines:
             line = line.strip()
