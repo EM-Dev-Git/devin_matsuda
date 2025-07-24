@@ -1,0 +1,13 @@
+2025-07-24 10:22:19,366 - transcript_api - INFO - Starting up transcript-to-meeting-minutes API
+2025-07-24 10:22:19,368 - transcript_api - INFO - Database tables created successfully
+2025-07-24 10:22:36,075 - transcript_api - INFO - Shutting down transcript-to-meeting-minutes API
+2025-07-24 10:22:38,329 - transcript_api - INFO - Starting up transcript-to-meeting-minutes API
+2025-07-24 10:22:38,331 - transcript_api - INFO - Database tables created successfully
+2025-07-24 10:22:49,054 - transcript_api - INFO - Login attempt for user: test_user
+2025-07-24 10:22:49,354 - transcript_api - INFO - User test_user authenticated successfully
+2025-07-24 10:22:49,356 - transcript_api - INFO - Successful login for user: test_user
+2025-07-24 10:22:59,954 - transcript_api - INFO - Meeting minutes generation request from user: test_user
+2025-07-24 10:22:59,954 - transcript_api - INFO - Transcript length: 72 characters
+2025-07-24 10:22:59,954 - transcript_api - ERROR - OpenAI API key not configured or is placeholder
+2025-07-24 10:22:59,954 - transcript_api - ERROR - Error generating meeting minutes: OpenAI API key not configured properly
+2025-07-24 10:22:59,954 - transcript_api - ERROR - Meeting minutes generation error for user test_user: 議事録生成中にエラーが発生しました: OpenAI API key not configured properly
