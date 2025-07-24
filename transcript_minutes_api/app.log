@@ -1,0 +1,17 @@
+2025-07-24 12:25:23,104 - modules.logger - INFO - Starting transcript_minutes_api application
+2025-07-24 12:25:23,120 - modules.logger - INFO - Database tables created
+2025-07-24 12:25:23,545 - modules.logger - INFO - Starting transcript_minutes_api application
+2025-07-24 12:25:23,547 - modules.logger - INFO - Database tables created
+2025-07-24 12:25:47,316 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.12.8/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-07-24 12:25:47,615 - modules.logger - INFO - New user registered: testuser
+2025-07-24 12:25:48,024 - modules.logger - INFO - Successful login for user: testuser
+2025-07-24 12:25:48,186 - modules.logger - WARNING - Invalid token provided
+2025-07-24 12:26:03,917 - modules.logger - INFO - Generating minutes for user: testuser
+2025-07-24 12:26:03,917 - modules.logger - INFO - Generating minutes for meeting: テスト会議
+2025-07-24 12:26:03,917 - modules.logger - ERROR - Error generating minutes: AsyncClient.__init__() got an unexpected keyword argument 'proxies'
+2025-07-24 12:26:03,918 - modules.logger - ERROR - Error generating minutes: 議事録生成に失敗しました: AsyncClient.__init__() got an unexpected keyword argument 'proxies'
