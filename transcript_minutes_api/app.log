@@ -51,3 +51,51 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 2025-07-24 12:21:09,053 - transcript_minutes_api - ERROR - OpenAI API key not configured properly
 2025-07-24 12:21:09,053 - transcript_minutes_api - ERROR - Error - User: testuser2, Error: Meeting minutes generation failed, Details: OpenAI API key not configured
 >>>>>>> af772fe42f0bc45e327e1468df85f437de342f3b
+2025-07-24 12:40:17,387 - transcript_minutes_api - INFO - Starting transcript_minutes_api application
+2025-07-24 12:40:17,389 - transcript_minutes_api - INFO - Database tables created
+2025-07-24 12:41:04,717 - transcript_minutes_api - INFO - User registration attempt: testuser
+2025-07-24 12:41:04,725 - transcript_minutes_api - WARNING - Registration failed - username already exists: testuser
+2025-07-24 12:41:04,862 - transcript_minutes_api - INFO - Login attempt: testuser
+2025-07-24 12:41:04,863 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.12.8/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-07-24 12:41:05,160 - transcript_minutes_api - INFO - Authentication attempt - Username: testuser, Status: SUCCESS
+2025-07-24 12:41:05,160 - transcript_minutes_api - INFO - Login successful: testuser
+2025-07-24 12:41:29,127 - transcript_minutes_api - INFO - Request - User: testuser, Endpoint: /transcript/generate, Method: POST
+2025-07-24 12:41:29,127 - transcript_minutes_api - INFO - Generating minutes for user: testuser
+2025-07-24 12:41:29,128 - transcript_minutes_api - INFO - OpenAI request - User: testuser, Transcript length: 59 characters
+2025-07-24 12:41:29,128 - transcript_minutes_api - INFO - Generating minutes for meeting: プロジェクト進捗会議
+2025-07-24 12:41:29,128 - transcript_minutes_api - WARNING - OpenAI API key not configured properly - using dummy key for testing
+2025-07-24 12:41:29,128 - transcript_minutes_api - ERROR - OpenAI API error: OpenAI API key not configured properly
+2025-07-24 12:41:29,128 - transcript_minutes_api - ERROR - Error - User: testuser, Error: Meeting minutes generation failed, Details: 議事録生成に失敗しました: OpenAI API key not configured properly
+2025-07-24 12:41:29,287 - transcript_minutes_api - INFO - Request - User: testuser, Endpoint: /transcript/meetings, Method: GET
+2025-07-24 12:41:29,287 - transcript_minutes_api - INFO - Fetching meetings for Graph user: test-user-id
+2025-07-24 12:41:29,287 - transcript_minutes_api - INFO - Fetching meetings for user: test-user-id
+2025-07-24 12:41:29,301 - azure.core.pipeline.policies.http_logging_policy - INFO - Request URL: 'https://login.microsoftonline.com/dummy-tenant-id/v2.0/.well-known/openid-configuration'
+Request method: 'GET'
+Request headers:
+    'User-Agent': 'azsdk-python-identity/1.15.0 Python/3.12.8 (Linux-5.10.223-x86_64-with-glibc2.35)'
+No body was attached to the request
+2025-07-24 12:41:29,577 - azure.core.pipeline.policies.http_logging_policy - INFO - Response status: 400
+Response headers:
+    'Cache-Control': 'private'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+    'Access-Control-Allow-Origin': 'REDACTED'
+    'Access-Control-Allow-Methods': 'REDACTED'
+    'P3P': 'REDACTED'
+    'x-ms-request-id': '12fb5952-eac7-46ed-8891-c018d8153600'
+    'x-ms-ests-server': 'REDACTED'
+    'x-ms-srs': 'REDACTED'
+    'Content-Security-Policy-Report-Only': 'REDACTED'
+    'X-XSS-Protection': 'REDACTED'
+    'Set-Cookie': 'REDACTED'
+    'Date': 'Thu, 24 Jul 2025 12:41:28 GMT'
+    'Content-Length': '660'
+2025-07-24 12:41:29,579 - azure.identity._internal.get_token_mixin - WARNING - ClientSecretCredential.get_token failed: Authentication failed: Unable to get authority configuration for https://login.microsoftonline.com/dummy-tenant-id. Authority would typically be in a format of https://login.microsoftonline.com/your_tenant or https://tenant_name.ciamlogin.com or https://tenant_name.b2clogin.com/tenant.onmicrosoft.com/policy.  Also please double check your tenant name or GUID is correct.
+2025-07-24 12:41:29,579 - transcript_minutes_api - ERROR - Unexpected error getting meetings: Authentication failed: Unable to get authority configuration for https://login.microsoftonline.com/dummy-tenant-id. Authority would typically be in a format of https://login.microsoftonline.com/your_tenant or https://tenant_name.ciamlogin.com or https://tenant_name.b2clogin.com/tenant.onmicrosoft.com/policy.  Also please double check your tenant name or GUID is correct.
+2025-07-24 12:41:29,579 - transcript_minutes_api - ERROR - Error - User: testuser, Error: Error fetching meetings, Details: Failed to fetch meetings: Authentication failed: Unable to get authority configuration for https://login.microsoftonline.com/dummy-tenant-id. Authority would typically be in a format of https://login.microsoftonline.com/your_tenant or https://tenant_name.ciamlogin.com or https://tenant_name.b2clogin.com/tenant.onmicrosoft.com/policy.  Also please double check your tenant name or GUID is correct.
