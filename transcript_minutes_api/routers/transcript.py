@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -16,7 +15,7 @@ from schemas.transcript import (
     TranscriptInfo,
     MeetingMinutesHistory
 )
-from modules.logger import logger
+from modules.logger import logger, log_request, log_error, log_openai_request
 
 router = APIRouter(prefix="/transcript", tags=["transcript"])
 
@@ -26,8 +25,18 @@ async def generate_minutes(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    log_request(current_user.username, "/transcript/generate", "POST")
+    
     try:
+        if not request.transcript.strip():
+            logger.warning(f"Empty transcript provided by user: {current_user.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Transcript cannot be empty"
+            )
+        
         logger.info(f"Generating minutes for user: {current_user.username}")
+        log_openai_request(current_user.username, len(request.transcript))
         
         minutes = await openai_client.generate_minutes(
             transcript=request.transcript,
@@ -57,8 +66,10 @@ async def generate_minutes(
             source="manual"
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error generating minutes: {str(e)}")
+        log_error(current_user.username, "Meeting minutes generation failed", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"議事録生成に失敗しました: {str(e)}"
@@ -69,6 +80,8 @@ async def get_user_meetings(
     user_id: str,
     current_user: User = Depends(get_current_user)
 ):
+    log_request(current_user.username, "/transcript/meetings", "GET")
+    
     try:
         logger.info(f"Fetching meetings for Graph user: {user_id}")
         
@@ -77,7 +90,7 @@ async def get_user_meetings(
         return [MeetingInfo(**meeting) for meeting in meetings]
         
     except Exception as e:
-        logger.error(f"Error fetching meetings: {str(e)}")
+        log_error(current_user.username, "Error fetching meetings", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"ミーティング取得に失敗しました: {str(e)}"
@@ -89,6 +102,8 @@ async def get_meeting_transcripts(
     user_id: str,
     current_user: User = Depends(get_current_user)
 ):
+    log_request(current_user.username, f"/transcript/meetings/{meeting_id}/transcripts", "GET")
+    
     try:
         logger.info(f"Fetching transcripts for meeting: {meeting_id}")
         
@@ -97,7 +112,7 @@ async def get_meeting_transcripts(
         return [TranscriptInfo(**transcript) for transcript in transcripts]
         
     except Exception as e:
-        logger.error(f"Error fetching transcripts: {str(e)}")
+        log_error(current_user.username, "Error fetching transcripts", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"トランスクリプト取得に失敗しました: {str(e)}"
@@ -109,6 +124,8 @@ async def generate_minutes_from_graph(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    log_request(current_user.username, "/transcript/generate-from-graph", "POST")
+    
     try:
         logger.info(f"Generating minutes from Graph transcript: {request.transcript_id}")
         
@@ -117,6 +134,8 @@ async def generate_minutes_from_graph(
             request.meeting_id, 
             request.transcript_id
         )
+        
+        log_openai_request(current_user.username, len(transcript_content))
         
         minutes = await openai_client.generate_minutes(
             transcript=transcript_content,
@@ -147,7 +166,7 @@ async def generate_minutes_from_graph(
         )
         
     except Exception as e:
-        logger.error(f"Error generating minutes from Graph: {str(e)}")
+        log_error(current_user.username, "Error generating minutes from Graph", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Graph APIからの議事録生成に失敗しました: {str(e)}"
@@ -158,6 +177,8 @@ async def get_minutes_history(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    log_request(current_user.username, "/transcript/history", "GET")
+    
     try:
         logger.info(f"Fetching minutes history for user: {current_user.username}")
         
@@ -168,89 +189,8 @@ async def get_minutes_history(
         return history
         
     except Exception as e:
-        logger.error(f"Error fetching history: {str(e)}")
+        log_error(current_user.username, "Error fetching history", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"履歴取得に失敗しました: {str(e)}"
         )
-||||||| ab1cd5e
-=======
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from datetime import datetime
-from modules.database import get_db, User, MeetingMinutes
-from modules.auth import get_current_user
-from modules.openai_client import generate_meeting_minutes
-from modules.logger import logger, log_request, log_error, log_openai_request
-from schemas.transcript import TranscriptRequest, TranscriptResponse, ErrorResponse
-
-router = APIRouter(prefix="/transcript", tags=["transcript"])
-
-@router.post("/generate", response_model=TranscriptResponse, responses={401: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
-async def generate_minutes(
-    request: TranscriptRequest,
-    current_user: str = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    log_request(current_user, "/transcript/generate", "POST")
-    
-    try:
-        if not request.transcript.strip():
-            logger.warning(f"Empty transcript provided by user: {current_user}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={
-                    "error": {
-                        "code": "INVALID_INPUT",
-                        "message": "Transcript cannot be empty",
-                        "details": "Please provide a valid transcript text"
-                    }
-                }
-            )
-        
-        log_openai_request(current_user, len(request.transcript))
-        
-        meeting_minutes = generate_meeting_minutes(
-            transcript=request.transcript,
-            meeting_title=request.meeting_title,
-            participants=request.participants
-        )
-        
-        user = db.query(User).filter(User.username == current_user).first()
-        if user:
-            participants_str = ", ".join(request.participants) if request.participants else None
-            meeting_record = MeetingMinutes(
-                user_id=user.id,
-                original_transcript=request.transcript,
-                generated_minutes=meeting_minutes,
-                meeting_title=request.meeting_title,
-                participants=participants_str
-            )
-            db.add(meeting_record)
-            db.commit()
-            logger.info(f"Meeting minutes saved to database for user: {current_user}")
-        
-        response = TranscriptResponse(
-            meeting_minutes=meeting_minutes,
-            generated_at=datetime.utcnow(),
-            status="success"
-        )
-        
-        logger.info(f"Successfully generated meeting minutes for user: {current_user}")
-        return response
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        log_error(current_user, "Meeting minutes generation failed", str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "error": {
-                    "code": "GENERATION_FAILED",
-                    "message": "Failed to generate meeting minutes",
-                    "details": str(e)
-                }
-            }
-        )
->>>>>>> af772fe42f0bc45e327e1468df85f437de342f3b

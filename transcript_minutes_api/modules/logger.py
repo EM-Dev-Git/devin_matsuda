@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-import logging
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-LOG_FILE = os.getenv("LOG_FILE", "app.log")
-
-def setup_logger():
-    logging.basicConfig(
-        level=getattr(logging, LOG_LEVEL.upper()),
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(LOG_FILE),
-            logging.StreamHandler()
-        ]
-    )
-    return logging.getLogger(__name__)
-
-logger = setup_logger()
-||||||| ab1cd5e
-=======
 import logging
 import os
 from datetime import datetime
@@ -58,4 +34,3 @@ def log_auth_attempt(username: str, success: bool):
 
 def log_openai_request(user_id: str, transcript_length: int):
     logger.info(f"OpenAI request - User: {user_id}, Transcript length: {transcript_length} characters")
->>>>>>> af772fe42f0bc45e327e1468df85f437de342f3b
