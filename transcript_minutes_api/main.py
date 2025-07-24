@@ -15,8 +15,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Transcript to Meeting Minutes API",
-    description="API for generating meeting minutes from transcripts using OpenAI",
-    version="1.0.0",
+    description="API for generating meeting minutes from transcripts using OpenAI. Microsoft Graph SDK integration for Teams meeting transcript retrieval.",
+    version="1.1.0",
     lifespan=lifespan
 )
 
@@ -34,8 +34,8 @@ app.include_router(transcript.router)
 @app.get("/")
 async def root():
     return {
-        "message": "Transcript to Meeting Minutes API",
-        "version": "1.0.0",
+        "message": "Transcript to Meeting Minutes API with Microsoft Graph integration",
+        "version": "1.1.0",
         "status": "running"
     }
 

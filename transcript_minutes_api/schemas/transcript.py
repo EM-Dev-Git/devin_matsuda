@@ -12,6 +12,29 @@ class TranscriptResponse(BaseModel):
     generated_at: datetime
     status: str = "success"
 
+class GraphTranscriptRequest(BaseModel):
+    meeting_id: str
+    user_id: Optional[str] = None
+    meeting_title: Optional[str] = None
+    participants: Optional[List[str]] = None
+
+class GraphTranscriptInfo(BaseModel):
+    id: str
+    created_date_time: Optional[str] = None
+    meeting_id: str
+    transcript_content_url: Optional[str] = None
+
+class GraphTranscriptListResponse(BaseModel):
+    transcripts: List[GraphTranscriptInfo]
+    meeting_id: str
+    status: str = "success"
+
+class GraphTranscriptResponse(BaseModel):
+    transcript_content: str
+    meeting_id: str
+    transcript_id: str
+    status: str = "success"
+
 class ErrorResponse(BaseModel):
     error: dict
     

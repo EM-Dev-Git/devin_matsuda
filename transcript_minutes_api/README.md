@@ -1,6 +1,6 @@
 # Transcript to Meeting Minutes API
 
-トランスクリプトから議事録を自動生成するFastAPI アプリケーション
+トランスクリプトから議事録を自動生成するFastAPI アプリケーション。Microsoft Graph SDKを使用してTeams会議のトランスクリプトを直接取得することもできます。
 
 ## 概要
 
@@ -10,6 +10,7 @@
 
 - **JWT認証**: セキュアなユーザー認証システム
 - **議事録生成**: OpenAI GPTを使用した高品質な議事録作成
+- **Microsoft Graph SDK統合**: Teams会議トランスクリプトの直接取得
 - **データベース**: ユーザー情報の安全な保存
 - **ログ機能**: 包括的なアクセス・エラーログ
 - **環境変数管理**: セキュアな設定管理
@@ -45,16 +46,34 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 OPENAI_API_KEY=sk-your-openai-api-key-here
 OPENAI_MODEL=gpt-3.5-turbo
 
+# Microsoft Graph設定
+GRAPH_CLIENT_ID=your-graph-client-id-here
+GRAPH_CLIENT_SECRET=your-graph-client-secret-here
+GRAPH_TENANT_ID=your-tenant-id-here
+
 # ログ設定
 LOG_LEVEL=INFO
 LOG_FILE=app.log
 ```
 
-### 3. データベースの初期化
+### 3. Microsoft Graph SDK セットアップ
+
+Microsoft Graph機能を使用するには、Azure Active Directoryでアプリケーションを登録する必要があります：
+
+1. **Azure ポータル**にアクセス
+2. **Azure Active Directory** > **アプリの登録** > **新規登録**
+3. アプリケーション名を入力し、**登録**をクリック
+4. **API のアクセス許可** > **アクセス許可の追加** > **Microsoft Graph** > **アプリケーションのアクセス許可**
+5. **OnlineMeetingTranscript.Read.All** 権限を追加
+6. **管理者の同意を与える**をクリック
+7. **証明書とシークレット**でクライアントシークレットを作成
+8. **概要**ページからアプリケーション（クライアント）IDとディレクトリ（テナント）IDを取得
+
+### 4. データベースの初期化
 
 アプリケーション起動時に自動的にデータベーステーブルが作成されます。
 
-### 4. テストユーザーの作成
+### 5. テストユーザーの作成
 
 初回利用時は、データベースに直接ユーザーを追加する必要があります：
 
@@ -174,6 +193,7 @@ APIは標準化されたエラーレスポンス形式を使用します：
 - パスワードはbcryptでハッシュ化して保存
 - JWTトークンには適切な有効期限を設定
 - 環境変数による機密情報管理
+- Microsoft Graph認証（クライアント資格情報フロー）
 - SQLインジェクション対策
 - 入力データバリデーション
 
@@ -192,6 +212,7 @@ transcript_minutes_api/
 │   ├── auth.py       # 認証処理
 │   ├── database.py   # DB接続・操作
 │   ├── openai_client.py # OpenAI連携
+│   ├── graph_client.py # Microsoft Graph連携
 │   └── logger.py     # ログ設定
 ├── schemas/          # Pydanticスキーマ
 │   ├── __init__.py
@@ -200,6 +221,7 @@ transcript_minutes_api/
 ├── main.py           # アプリケーションエントリーポイント
 ├── requirements.txt  # 依存関係
 ├── .env.example      # 環境変数テンプレート
+├── test_graph_integration.py # Graph統合テスト
 └── README.md
 ```
 
