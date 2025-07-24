@@ -1,0 +1,32 @@
+2025-07-24 12:20:07,068 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.12.8/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-07-24 12:20:24,202 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.12.8/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-07-24 12:20:27,083 - transcript_minutes_api - INFO - Starting up transcript-to-meeting-minutes API
+2025-07-24 12:20:27,085 - transcript_minutes_api - INFO - Database tables created successfully
+2025-07-24 12:21:07,052 - transcript_minutes_api - INFO - Shutting down transcript-to-meeting-minutes API
+2025-07-24 12:21:08,435 - transcript_minutes_api - INFO - Starting up transcript-to-meeting-minutes API
+2025-07-24 12:21:08,436 - transcript_minutes_api - INFO - Database tables created successfully
+2025-07-24 12:21:08,451 - transcript_minutes_api - INFO - User registration attempt: testuser2
+2025-07-24 12:21:08,460 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.12.8/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-07-24 12:21:08,768 - transcript_minutes_api - INFO - User registered successfully: testuser2
+2025-07-24 12:21:08,771 - transcript_minutes_api - INFO - Login attempt: testuser2
+2025-07-24 12:21:09,048 - transcript_minutes_api - INFO - Authentication attempt - Username: testuser2, Status: SUCCESS
+2025-07-24 12:21:09,048 - transcript_minutes_api - INFO - Login successful: testuser2
+2025-07-24 12:21:09,052 - transcript_minutes_api - INFO - Request - User: testuser2, Endpoint: /transcript/generate, Method: POST
+2025-07-24 12:21:09,053 - transcript_minutes_api - INFO - OpenAI request - User: testuser2, Transcript length: 106 characters
+2025-07-24 12:21:09,053 - transcript_minutes_api - ERROR - OpenAI API key not configured properly
+2025-07-24 12:21:09,053 - transcript_minutes_api - ERROR - Error - User: testuser2, Error: Meeting minutes generation failed, Details: OpenAI API key not configured
