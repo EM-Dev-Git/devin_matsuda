@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -52,3 +53,7 @@ def get_db():
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
+||||||| ab1cd5e
+=======
+
+>>>>>>> af772fe42f0bc45e327e1468df85f437de342f3b
