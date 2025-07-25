@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     openai_api_key: str
     openai_model: str = "gpt-3.5-turbo"
     
+    microsoft_tenant_id: str
+    microsoft_client_id: str
+    microsoft_client_secret: str
+    microsoft_graph_scopes: str = "https://graph.microsoft.com/.default"
+    
     log_level: str = "INFO"
     log_file: str = "app.log"
 

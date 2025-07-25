@@ -2,15 +2,17 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..schemas.transcript import TranscriptCreate, TranscriptResponse, TranscriptList, TranscriptUpdate
+from ..schemas.transcript import TranscriptCreate, TranscriptResponse, TranscriptList, TranscriptUpdate, TranscriptFromGraph
 from ..schemas.auth import UserInToken
 from ..dependencies import get_current_user
 from ..modules.transcript_processor import (
     process_transcript,
+    process_graph_transcript,
     get_user_transcripts,
     get_transcript_by_id,
     update_transcript,
-    delete_transcript
+    delete_transcript,
+    get_available_graph_transcripts
 )
 from ..modules.logger import get_logger
 
@@ -67,6 +69,36 @@ async def update_transcript_endpoint(
     if not transcript:
         raise HTTPException(status_code=404, detail="Transcript not found")
     return transcript
+
+
+@router.post("/from-graph", response_model=TranscriptResponse)
+async def create_transcript_from_graph(
+    graph_data: TranscriptFromGraph,
+    current_user: UserInToken = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    logger.info("Graph transcript creation request", extra={
+        "user_id": current_user.id, 
+        "meeting_id": graph_data.meeting_id,
+        "transcript_id": graph_data.transcript_id
+    })
+    transcript = await process_graph_transcript(db, graph_data, current_user.id)
+    return transcript
+
+
+@router.get("/graph/available")
+async def get_available_graph_transcripts_endpoint(
+    organizer_id: str,
+    limit: int = 50,
+    current_user: UserInToken = Depends(get_current_user)
+):
+    logger.info("Available Graph transcripts request", extra={
+        "user_id": current_user.id, 
+        "organizer_id": organizer_id, 
+        "limit": limit
+    })
+    transcripts = await get_available_graph_transcripts(organizer_id, limit)
+    return {"transcripts": transcripts}
 
 
 @router.delete("/{transcript_id}")

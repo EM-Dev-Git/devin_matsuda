@@ -13,6 +13,12 @@ class Transcript(Base):
     original_transcript = Column(Text, nullable=False)
     generated_minutes = Column(Text)
     status = Column(String(20), default="pending")
+    
+    source_type = Column(String(20), default="manual")
+    graph_meeting_id = Column(String(255), nullable=True)
+    graph_transcript_id = Column(String(255), nullable=True)
+    graph_organizer_id = Column(String(255), nullable=True)
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

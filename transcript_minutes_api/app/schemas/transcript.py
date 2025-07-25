@@ -12,6 +12,13 @@ class TranscriptCreate(TranscriptBase):
     pass
 
 
+class TranscriptFromGraph(BaseModel):
+    meeting_id: str
+    transcript_id: str
+    organizer_id: Optional[str] = None
+    title: Optional[str] = None
+
+
 class TranscriptUpdate(BaseModel):
     title: Optional[str] = None
     original_transcript: Optional[str] = None
@@ -22,6 +29,10 @@ class TranscriptResponse(TranscriptBase):
     user_id: int
     generated_minutes: Optional[str] = None
     status: str
+    source_type: str
+    graph_meeting_id: Optional[str] = None
+    graph_transcript_id: Optional[str] = None
+    graph_organizer_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
